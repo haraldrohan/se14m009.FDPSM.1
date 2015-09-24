@@ -71,7 +71,7 @@ implements MoviesFragment.OnFragmentInteractionListener
 
         MoviesFragment newFragment = new MoviesFragment();
         Bundle args = new Bundle();
-        args.putString(MoviesFragment.ARG_PARAM1, message);
+        args.putString(MoviesFragment.SEARCH_PARAM, message);
         newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

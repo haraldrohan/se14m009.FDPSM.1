@@ -1,7 +1,6 @@
 package at.technikum.se14m009.movies;
 
 import android.app.Activity;
-import android.graphics.Movie;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -17,23 +16,15 @@ import android.widget.ListView;
  */
 public class MoviesFragment extends ListFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    public static final String SEARCH_PARAM = "searchParam";
+    private String searchParam;
     private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename and change types of parameters
     public static MoviesFragment newInstance(String param1, String param2) {
         MoviesFragment fragment = new MoviesFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(SEARCH_PARAM, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,15 +41,25 @@ public class MoviesFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            searchParam = getArguments().getString(SEARCH_PARAM);
         }
 
         // TODO: Change Adapter to display your content
         final ArrayAdapter<MovieContent.MovieItem> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1);
         setListAdapter(adapter);
-        MovieContent.SetItems(getContext(), adapter, mParam1);
+        MovieContent.SetItems(getContext(), adapter, searchParam);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override

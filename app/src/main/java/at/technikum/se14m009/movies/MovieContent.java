@@ -1,7 +1,10 @@
 package at.technikum.se14m009.movies;
 
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -14,11 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -28,31 +26,9 @@ import java.util.Map;
  */
 public class MovieContent {
 
-    /**
-     * An array of sample (dummy) items.
-     */
-    public static List<MovieItem> ITEMS = new ArrayList<>();
+    public static void SetItems(final Context context, final ArrayAdapter<MovieItem> adapter, String search) {
 
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static Map<String, MovieItem> ITEM_MAP = new HashMap<>();
-
-    static {
-        // Add 3 sample items.
-        addItem(new MovieItem("1", "1", "Item 1"));
-        addItem(new MovieItem("2", "1", "Item 2"));
-        addItem(new MovieItem("3", "1", "Item 3"));
-    }
-
-    private static void addItem(MovieItem item) {
-        ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
-    }
-
-    public static void SetItems(Context context, final ArrayAdapter<MovieItem> adapter, String mParam1) {
-
-        String url = "http://www.omdbapi.com/?s="+mParam1;
+        String url = "http://www.omdbapi.com/?s="+search;
         RequestQueue queue = Volley.newRequestQueue(context);
         final JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, new Response.Listener<JSONObject>() {
@@ -69,6 +45,7 @@ public class MovieContent {
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            ShowError(context, e.getLocalizedMessage());
                         }
                         //mTxtDisplay.setText("Response: " + response.toString());
                     }
@@ -76,11 +53,57 @@ public class MovieContent {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-
+                        ShowError(context, error.getLocalizedMessage());
                     }
                 });
         queue.add(jsObjRequest);
+    }
+
+    public static void SetItem(final Context context, final View view, String imdbID) {
+
+        String url = "http://www.omdbapi.com/?i=" + imdbID;
+        RequestQueue queue = Volley.newRequestQueue(context);
+        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                                TextView title = (TextView) view.findViewById(R.id.movieTitle);
+                                title.setText(response.getString("Title"));
+                                TextView runtime = (TextView) view.findViewById(R.id.movieRuntime);
+                                runtime.setText(response.getString("Runtime"));
+                                TextView year = (TextView) view.findViewById(R.id.movieYear);
+                                year.setText(response.getString("Year"));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            ShowError(context, e.getLocalizedMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        ShowError(context, error.getLocalizedMessage());
+                    }
+                });
+        queue.add(jsObjRequest);
+    }
+
+    private static void ShowError(Context context, String errorText)
+    {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Error");
+
+        // Setting Dialog Message
+        alertDialog.setMessage(errorText);
+
+        // Showing Alert Message
+        alertDialog.show();
     }
 
     /**
@@ -90,7 +113,6 @@ public class MovieContent {
         public String id;
         public String imdbID;
         public String content;
-
 
         public MovieItem(String id, String imdbID, String content) {
             this.id = id;
