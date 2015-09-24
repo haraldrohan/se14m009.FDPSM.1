@@ -9,8 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 
 public class MovieActivity extends AppCompatActivity
-implements MoviesFragment.OnFragmentInteractionListener
-
+    implements MovieListFragment.OnFragmentInteractionListener
 {
 
     @Override
@@ -42,7 +41,6 @@ implements MoviesFragment.OnFragmentInteractionListener
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -65,15 +63,18 @@ implements MoviesFragment.OnFragmentInteractionListener
         return super.onOptionsItemSelected(item);
     }
 
-    public void Search(View view) {
+    public void onSearch(View view) {
+        // get the search term provided by the user
         EditText editText = (EditText) findViewById(R.id.editText);
         String message = editText.getText().toString();
 
-        MoviesFragment newFragment = new MoviesFragment();
+        // create the movie list fragment and forward the search term
+        MovieListFragment newFragment = new MovieListFragment();
         Bundle args = new Bundle();
-        args.putString(MoviesFragment.SEARCH_PARAM, message);
+        args.putString(MovieListFragment.SEARCH_PARAM, message);
         newFragment.setArguments(args);
 
+        // change the fragment from search to movie list
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment, newFragment);
         transaction.addToBackStack(null);
@@ -82,11 +83,14 @@ implements MoviesFragment.OnFragmentInteractionListener
 
     @Override
     public void onFragmentInteraction(String imdbID) {
-        MovieFragment newFragment = new MovieFragment();
+        // one individual movie has been selected
+        // create a movie detail fragment and forward the movie imdbID
+        MovieDetailFragment newFragment = new MovieDetailFragment();
         Bundle args = new Bundle();
-        args.putString(MovieFragment.ImdbID, imdbID);
+        args.putString(MovieDetailFragment.ImdbID, imdbID);
         newFragment.setArguments(args);
 
+        // change the fragment from movie list to movie details
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment, newFragment);
         transaction.addToBackStack(null);

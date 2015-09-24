@@ -10,10 +10,12 @@ import android.view.ViewGroup;
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * to handle interaction events.
- * Use the {@link MovieFragment#newInstance} factory method to
+ * Use the {@link MovieDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MovieFragment extends Fragment {
+public class MovieDetailFragment extends Fragment {
+
+    // holds the movie id
     public static final String ImdbID = "imdbID";
     private String imdbID;
 
@@ -21,17 +23,17 @@ public class MovieFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment MovieFragment.
+     * @return A new instance of fragment MovieDetailFragment.
      */
-    public static MovieFragment newInstance(String imdbID) {
-        MovieFragment fragment = new MovieFragment();
+    public static MovieDetailFragment newInstance(String imdbID) {
+        MovieDetailFragment fragment = new MovieDetailFragment();
         Bundle args = new Bundle();
         args.putString(ImdbID, imdbID);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public MovieFragment() {
+    public MovieDetailFragment() {
         // Required empty public constructor
     }
 
@@ -39,6 +41,7 @@ public class MovieFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            // store the given movie id
             imdbID = getArguments().getString(ImdbID);
         }
     }
@@ -46,14 +49,14 @@ public class MovieFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_movie, container, false);
-        MovieContent.SetItem(getContext(), view, imdbID);
+
+        // use the id to fill the movie details in another worker thread
+        MovieService.SetItem(getContext(), view, imdbID);
         return view;
     }
-
-
-
 
     @Override
     public void onDetach() {

@@ -20,6 +20,6 @@
         android:layout_height="wrap_content"
         android:text="@string/Search"
         android:id="@+id/button"
-        android:onClick="Search" />
+        android:onClick="onSearch" />
 
 </LinearLayout>

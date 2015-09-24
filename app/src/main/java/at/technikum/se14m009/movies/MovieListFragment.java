@@ -1,6 +1,7 @@
 package at.technikum.se14m009.movies;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -14,15 +15,15 @@ import android.widget.ListView;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class MoviesFragment extends ListFragment {
+public class MovieListFragment extends ListFragment {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // the movies search term
     public static final String SEARCH_PARAM = "searchParam";
     private String searchParam;
     private OnFragmentInteractionListener mListener;
 
-    public static MoviesFragment newInstance(String param1, String param2) {
-        MoviesFragment fragment = new MoviesFragment();
+    public static MovieListFragment newInstance(String param1, String param2) {
+        MovieListFragment fragment = new MovieListFragment();
         Bundle args = new Bundle();
         args.putString(SEARCH_PARAM, param1);
         fragment.setArguments(args);
@@ -33,7 +34,7 @@ public class MoviesFragment extends ListFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public MoviesFragment() {
+    public MovieListFragment() {
     }
 
     @Override
@@ -44,20 +45,21 @@ public class MoviesFragment extends ListFragment {
             searchParam = getArguments().getString(SEARCH_PARAM);
         }
 
-        // TODO: Change Adapter to display your content
-        final ArrayAdapter<MovieContent.MovieItem> adapter = new ArrayAdapter<>(getActivity(),
+        // create and assign the list adapter
+        final ArrayAdapter<MovieService.MovieItem> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1);
         setListAdapter(adapter);
-        MovieContent.SetItems(getContext(), adapter, searchParam);
+        // fill the adapter items in another worker thread
+        MovieService.SetItems(getContext(), adapter, searchParam);
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFragmentInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -75,8 +77,8 @@ public class MoviesFragment extends ListFragment {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            MovieContent.MovieItem movieItem =
-                    (MovieContent.MovieItem)l.getItemAtPosition(position);
+            MovieService.MovieItem movieItem =
+                    (MovieService.MovieItem)l.getItemAtPosition(position);
             mListener.onFragmentInteraction(movieItem.imdbID);
         }
     }
@@ -92,8 +94,6 @@ public class MoviesFragment extends ListFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(String imdbID);
     }
-
 }
