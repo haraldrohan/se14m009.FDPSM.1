@@ -21,6 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 
 /**
  * Handles calls to the movie service.
@@ -37,34 +40,43 @@ public class MovieService {
 
     public static void SetItems(final Context context, final ArrayAdapter<MovieItem> adapter, String search) {
 
-        String url = "http://www.omdbapi.com/?s="+search;
-        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, new Response.Listener<JSONObject>() {
+        try
+        {
+            String query = URLEncoder.encode(search, "utf-8");
+            String url = "http://www.omdbapi.com/?s="+query;
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray jsonArray = response.getJSONArray("Search");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                final JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                final String title = jsonObject.getString("Title");
-                                final String imdbID = jsonObject.getString("imdbID");
-                                adapter.add(new MovieItem(Integer.toString(i), imdbID , title));
+            final JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.GET, url, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONArray jsonArray = response.getJSONArray("Search");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    final JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    final String title = jsonObject.getString("Title");
+                                    final String imdbID = jsonObject.getString("imdbID");
+                                    adapter.add(new MovieItem(Integer.toString(i), imdbID , title));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                ShowError(context, e.getLocalizedMessage());
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            ShowError(context, e.getLocalizedMessage());
+                            //mTxtDisplay.setText("Response: " + response.toString());
                         }
-                        //mTxtDisplay.setText("Response: " + response.toString());
-                    }
-                }, new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        ShowError(context, error.getLocalizedMessage());
-                    }
-                });
-        getQueue(context).add(jsObjRequest);
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            ShowError(context, error.getLocalizedMessage());
+                        }
+                    });
+            getQueue(context).add(jsObjRequest);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            ShowError(context, e.getLocalizedMessage());
+        }
     }
 
     public static void SetItem(final Context context, final View view, String imdbID) {
