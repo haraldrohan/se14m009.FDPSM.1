@@ -4,9 +4,14 @@ import android.support.v4.app.ListFragment;
 import android.widget.ArrayAdapter;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.rest.RestService;
+
+import java.util.List;
 
 /**
  * A fragment representing a list of movies.
@@ -17,18 +22,33 @@ public class MovieListFragment extends ListFragment {
     @FragmentArg
     String SearchParam;
 
+    @RestService
+    MovieService movieService;
+
     @AfterViews
     protected void init() {
         // create and assign the list adapter
-        final ArrayAdapter<MovieService.MovieItem> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1);
+        final ArrayAdapter<MovieItem> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1);
         setListAdapter(adapter);
-        // fill the adapter items in another worker thread
-        MovieService.SetItems(getContext(), adapter, SearchParam);
+        initMovies();
+    }
+
+    @Background
+    void initMovies()
+    {
+        final SearchResult searchResult = movieService.searchMovies(SearchParam);
+        setMovies(searchResult.Movies);
+    }
+
+    @UiThread
+    void setMovies(List<MovieItem> movies) {
+        ArrayAdapter<MovieItem> adapter = (ArrayAdapter<MovieItem>)getListAdapter();
+        adapter.addAll(movies);
     }
 
     @ItemClick
-    void listItemClicked(MovieService.MovieItem movieItem)
+    void listItemClicked(MovieItem movieItem)
     {
         // one individual movie has been selected
         // create a movie detail fragment and forward the movie imdbID
