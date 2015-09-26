@@ -1,22 +1,32 @@
 package at.technikum.se14m009.movies;
 
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.EditText;
+
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 
 /**
- * A placeholder fragment containing a simple view.
+ * A fragment to search for movies.
  */
+@EFragment(R.layout.fragment_search)
 public class MovieSearchFragment extends Fragment {
 
-    public MovieSearchFragment() {
-    }
+    @ViewById
+    EditText search_text;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_search, container, false);
+    @Click
+    public void search(View view) {
+        // get the search term provided by the user
+        String message = search_text.getText().toString();
+
+        // create the movie list fragment and forward the search term
+        MovieListFragment newFragment = new MovieListFragment_().builder().SearchParam(message).build();
+
+        // change the fragment from search to movie list
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment, newFragment).addToBackStack(null).commit();
     }
 }
