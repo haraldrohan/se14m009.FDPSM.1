@@ -3,4 +3,5 @@
     <string name="search_caption">Please enter search term:</string>
     <string name="action_settings">Settings</string>
     <string name="Search">Search</string>
+    <string name="Cache">Cache</string>
 </resources>

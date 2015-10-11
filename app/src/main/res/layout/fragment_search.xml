@@ -19,4 +19,10 @@
         android:text="@string/Search"
         android:id="@+id/search" />
 
+    <Button
+        android:layout_width="158dp"
+        android:layout_height="wrap_content"
+        android:text="@string/Cache"
+        android:id="@+id/cache" />
+
 </LinearLayout>

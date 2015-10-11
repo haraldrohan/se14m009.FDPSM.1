@@ -1,12 +1,24 @@
 package at.technikum.se14m009.movies;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
+/**
+ * Holds a search result created by json deserialization.
+ */
 public class SearchResult {
     @JsonProperty("Search")
     public List<MovieItem> Movies;
+    public String SearchTerm;
 
+    /**
+     * @return a representation for the search result
+     */
+    @Override
+    public String toString() {
+        return SearchTerm;
+    }
 }
 
 /*

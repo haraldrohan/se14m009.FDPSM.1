@@ -27,7 +27,7 @@ public class MovieActivity extends AppCompatActivity
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment, firstFragment).commit();
+                    .replace(R.id.fragment, firstFragment).commit();
         }
     }
 }

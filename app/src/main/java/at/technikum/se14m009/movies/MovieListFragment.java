@@ -36,6 +36,9 @@ public class MovieListFragment extends ListFragment {
         initMovies();
     }
 
+    /**
+     * Loads the movies.
+     */
     @Background
     void initMovies()
     {
@@ -44,12 +47,20 @@ public class MovieListFragment extends ListFragment {
         setMovies(searchResult.Movies);
     }
 
+    /**
+     *
+     * @param movies shows the list of movies found
+     */
     @UiThread
     void setMovies(List<MovieItem> movies) {
         ArrayAdapter<MovieItem> adapter = (ArrayAdapter<MovieItem>)getListAdapter();
         adapter.addAll(movies);
     }
 
+    /**
+     *
+     * @param movieItem holds the selected movie
+     */
     @ItemClick
     void listItemClicked(MovieItem movieItem)
     {
@@ -59,6 +70,7 @@ public class MovieListFragment extends ListFragment {
 
         // change the fragment from movie list to movie details
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment, newFragment).addToBackStack(null).commit();
+                .replace(R.id.fragment, newFragment)
+                .addToBackStack(null).commit();
     }
 }

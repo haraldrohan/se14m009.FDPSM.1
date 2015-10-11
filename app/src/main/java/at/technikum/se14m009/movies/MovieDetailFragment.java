@@ -47,6 +47,9 @@ public class MovieDetailFragment extends Fragment {
         initMovie();
     }
 
+    /**
+     * Loads the movie.
+     */
     @Background
     void initMovie()
     {
@@ -54,6 +57,10 @@ public class MovieDetailFragment extends Fragment {
         setMovie(db.getMovie(ImdbID));
     }
 
+    /**
+     *
+     * @param movieItem details to be shown in detail screen.
+     */
     @UiThread
     void setMovie(MovieItem movieItem) {
         movie_title.setText(movieItem.Title);
@@ -62,6 +69,9 @@ public class MovieDetailFragment extends Fragment {
         initImage(movieItem.Poster);
     }
 
+    /**
+     * @param url for the image to be loaded in background.
+     */
     @Background
     void initImage(String url)
     {
@@ -84,6 +94,9 @@ public class MovieDetailFragment extends Fragment {
         requestQueue.add(request);
     }
 
+    /**
+     * @param bitmap to be shown for the given movie.
+     */
     @UiThread
     void setImage(Bitmap bitmap) {
         movie_poster.setImageBitmap(bitmap);

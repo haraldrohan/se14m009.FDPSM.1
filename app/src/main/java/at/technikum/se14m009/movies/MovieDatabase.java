@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import at.technikum.se14m009.generated.DaoMaster;
 import at.technikum.se14m009.generated.DaoSession;
@@ -23,6 +24,11 @@ public class MovieDatabase {
     private final SearchEntityDao searchEntityDao;
     private final MovieService movieService;
 
+    /**
+     * Creates a database instance
+     * @param context for the calling ui element
+     * @param movieService to be used for loading data
+     */
     public MovieDatabase(Context context, MovieService movieService) {
         this.movieService = movieService;
         SQLiteDatabase db = new DaoMaster
@@ -34,6 +40,14 @@ public class MovieDatabase {
         daoSession = daoMaster.newSession();
         movieEntityDao = daoSession.getMovieEntityDao();
         searchEntityDao = daoSession.getSearchEntityDao();
+    }
+
+    /**
+     * Creates a database instance without service
+     * @param context for the calling ui element
+     */
+    public MovieDatabase(Context context) {
+        this(context,null);
     }
 
     /***
@@ -96,5 +110,18 @@ public class MovieDatabase {
         movieItem.Poster = movieEntity.getPoster();
         movieItem.imdbID = movieEntity.getImdbId();
         return movieItem;
+    }
+
+    /**
+     * @return all stored search results.
+     */
+    public List<SearchResult> CachedResults() {
+        List<SearchResult> searchResults = new ArrayList<>();
+        for (SearchEntity searchEntity : searchEntityDao.loadAll()) {
+            SearchResult searchResult = new SearchResult();
+            searchResult.SearchTerm = searchEntity.getSearchTerm();
+            searchResults.add(searchResult);
+        }
+        return searchResults;
     }
 }

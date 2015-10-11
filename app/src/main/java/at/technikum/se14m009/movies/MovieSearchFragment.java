@@ -17,6 +17,10 @@ public class MovieSearchFragment extends Fragment {
     @ViewById
     EditText search_text;
 
+    /**
+     *
+     * @param view search result based on search term
+     */
     @Click
     public void search(View view) {
         // get the search term provided by the user
@@ -24,6 +28,21 @@ public class MovieSearchFragment extends Fragment {
 
         // create the movie list fragment and forward the search term
         MovieListFragment newFragment = new MovieListFragment_().builder().SearchParam(message).build();
+
+        // change the fragment from search to movie list
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment, newFragment).addToBackStack(null).commit();
+    }
+
+    /**
+     *
+     * @param view search results based on cached items
+     */
+    @Click
+    public void cache(View view) {
+
+        // create the movie list fragment and forward the search term
+        CacheListFragment newFragment = new CacheListFragment_();
 
         // change the fragment from search to movie list
         getFragmentManager().beginTransaction()
