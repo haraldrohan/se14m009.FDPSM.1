@@ -3,12 +3,14 @@ package at.technikum.se14m009.movies;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import at.technikum.se14m009.generated.DaoMaster;
 import at.technikum.se14m009.generated.DaoSession;
-import at.technikum.se14m009.generated.MovieItemDao;
-import at.technikum.se14m009.generated.SearchResultDao;
+import at.technikum.se14m009.generated.MovieEntity;
+import at.technikum.se14m009.generated.MovieEntityDao;
+import at.technikum.se14m009.generated.SearchEntity;
+import at.technikum.se14m009.generated.SearchEntityDao;
 import de.greenrobot.dao.query.QueryBuilder;
 
 /**
@@ -17,8 +19,8 @@ import de.greenrobot.dao.query.QueryBuilder;
 public class MovieDatabase {
     private static DaoMaster daoMaster;
     private static DaoSession daoSession;
-    private final MovieItemDao movieItemDao;
-    private final SearchResultDao searchResultDao;
+    private final MovieEntityDao movieEntityDao;
+    private final SearchEntityDao searchEntityDao;
     private final MovieService movieService;
 
     public MovieDatabase(Context context, MovieService movieService) {
@@ -30,48 +32,69 @@ public class MovieDatabase {
         //DaoMaster.createAllTables(db, false);
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
-        movieItemDao = daoSession.getMovieItemDao();
-        searchResultDao = daoSession.getSearchResultDao();
+        movieEntityDao = daoSession.getMovieEntityDao();
+        searchEntityDao = daoSession.getSearchEntityDao();
     }
 
+    /***
+     * Get's and stores the search result including movie items
+     * by given search param.
+     * @param searchParam
+     * @return Search result including all found movie items.
+     */
     public SearchResult searchMovies(String searchParam) {
 
-        QueryBuilder<at.technikum.se14m009.generated.SearchResult> builder = searchResultDao.queryBuilder();
-        builder.where(SearchResultDao.Properties.SearchTerm.eq(searchParam));
-        at.technikum.se14m009.generated.SearchResult searchResult = builder.unique();
+        QueryBuilder<SearchEntity> searchBuilder = searchEntityDao.queryBuilder();
+        searchBuilder.where(SearchEntityDao.Properties.SearchTerm.eq(searchParam));
+        SearchEntity searchEntity = searchBuilder.unique();
 
-        if (searchResult == null)
+        if (searchEntity == null)
         {
-            SearchResult r = movieService.searchMovies(searchParam);
-            searchResult = new at.technikum.se14m009.generated.SearchResult(searchParam);
-            searchResultDao.insert(searchResult);
+            long searchId = searchEntityDao.count() + 1;
+            SearchResult searchResult = movieService.searchMovies(searchParam);
+            searchEntity = new SearchEntity(searchId, searchParam);
+            searchEntityDao.insert(searchEntity);
+            for (MovieItem i:searchResult.Movies) {
+                movieEntityDao.insert(new MovieEntity
+                        (i.Title, i.Runtime, i.Year, i.Poster, i.imdbID, searchId));
+            }
         }
 
-        SearchResult r = movieService.searchMovies(searchParam);
-        //searchResultDao.insert(new at.technikum.se14m009.generated.SearchResult(searchParam));
-        return r;
+        SearchResult searchResult = new SearchResult();
+        searchResult.Movies = new ArrayList<MovieItem>();
+
+        QueryBuilder<MovieEntity> movieBuilder = movieEntityDao.queryBuilder();
+        movieBuilder.where(MovieEntityDao.Properties.SearchId.eq(searchEntity.getId()));
+        for (MovieEntity movieEntity : movieBuilder.list()) {
+            MovieItem movieItem = new MovieItem();
+            movieItem.Title = movieEntity.getTitle();
+            movieItem.Runtime = movieEntity.getRuntime();
+            movieItem.Year = movieEntity.getYear();
+            movieItem.Poster = movieEntity.getPoster();
+            movieItem.imdbID = movieEntity.getImdbId();
+            searchResult.Movies.add(movieItem);
+        }
+
+        return searchResult;
     }
 
+    /**
+     * Returns the stored movie item by given imdbId.
+     * @param imdbID
+     * @return the stored movie item.
+     */
     public MovieItem getMovie(String imdbID) {
 
-        QueryBuilder<at.technikum.se14m009.generated.MovieItem> builder = movieItemDao.queryBuilder();
-        builder.where(MovieItemDao.Properties.ImdbID.eq(imdbID));
-        at.technikum.se14m009.generated.MovieItem movieItem = builder.unique();
+        QueryBuilder<MovieEntity> movieBuilder = movieEntityDao.queryBuilder();
+        movieBuilder.where(MovieEntityDao.Properties.ImdbId.eq(imdbID));
+        MovieEntity movieEntity = movieBuilder.uniqueOrThrow();
 
-        if (movieItem == null)
-        {
-            MovieItem i = movieService.getMovie(imdbID);
-            movieItem = new at.technikum.se14m009.generated.MovieItem(
-                    i.Title,i.Runtime,i.Year,i.Poster,i.imdbID);
-            movieItemDao.insert(movieItem);
-        }
-
-        MovieItem i = new MovieItem();
-        i.Title = movieItem.getTitle();
-        i.Runtime = movieItem.getRuntime();
-        i.Year = movieItem.getYear();
-        i.Poster = movieItem.getPoster();
-        i.imdbID = movieItem.getImdbID();
-        return i;
+        MovieItem movieItem = new MovieItem();
+        movieItem.Title = movieEntity.getTitle();
+        movieItem.Runtime = movieEntity.getRuntime();
+        movieItem.Year = movieEntity.getYear();
+        movieItem.Poster = movieEntity.getPoster();
+        movieItem.imdbID = movieEntity.getImdbId();
+        return movieItem;
     }
 }

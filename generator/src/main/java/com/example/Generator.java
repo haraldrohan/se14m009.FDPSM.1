@@ -14,19 +14,20 @@ public class Generator {
         // we are generating the schema here
 
         // defining the Person entity
-        Entity movieItem = schema.addEntity("MovieItem");
-        movieItem.setTableName("MovieItem"); // note that we can actually manually provide a table name!
+        Entity movie = schema.addEntity("MovieEntity");
+        movie.setTableName("MovieEntity"); // note that we can actually manually provide a table name!
         //person.addIdProperty();
-        movieItem.addStringProperty("Title");
-        movieItem.addStringProperty("Runtime");
-        movieItem.addStringProperty("Year");
-        movieItem.addStringProperty("Poster");
-        movieItem.addStringProperty("imdbID");
+        movie.addStringProperty("Title");
+        movie.addStringProperty("Runtime");
+        movie.addStringProperty("Year");
+        movie.addStringProperty("Poster");
+        movie.addStringProperty("ImdbId");
+        final Property searchId = movie.addLongProperty("SearchId").notNull().getProperty();
 
-        Entity searchResult = schema.addEntity("SearchResult");
-        searchResult.setTableName("SearchResult"); // note that we can actually manually provide a table name!
-        //searchResult.addIdProperty();
-        searchResult.addStringProperty("SearchTerm");
+        Entity search = schema.addEntity("SearchEntity");
+        search.setTableName("SearchEntity"); // note that we can actually manually provide a table name!
+        search.addIdProperty();
+        search.addStringProperty("SearchTerm");
 
         new DaoGenerator().generateAll(schema, TARGET_FOLDER);
     }
