@@ -14,4 +14,19 @@ public class MovieItem {
     public String toString() {
         return Title;
     }
+    public String getTitle() {
+        return Title;
+    }
+    public String getYear() {
+        return Year;
+    }
+    public String getRuntime() {
+        return Runtime;
+    }
+    public String getPoster() {
+        return Poster;
+    }
+    public String getImdbID() {
+        return imdbID;
+    }
 }

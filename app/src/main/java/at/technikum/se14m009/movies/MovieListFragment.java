@@ -25,6 +25,8 @@ public class MovieListFragment extends ListFragment {
     @RestService
     MovieService movieService;
 
+    private MovieDatabase db;
+
     @AfterViews
     protected void init() {
         // create and assign the list adapter
@@ -37,7 +39,8 @@ public class MovieListFragment extends ListFragment {
     @Background
     void initMovies()
     {
-        final SearchResult searchResult = movieService.searchMovies(SearchParam);
+        db = new MovieDatabase(getContext(), movieService);
+        final SearchResult searchResult = db.searchMovies(SearchParam);
         setMovies(searchResult.Movies);
     }
 

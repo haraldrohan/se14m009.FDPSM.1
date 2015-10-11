@@ -40,6 +40,8 @@ public class MovieDetailFragment extends Fragment {
     @ViewById
     ImageView movie_poster;
 
+    private MovieDatabase db;
+
     @AfterViews
     protected void init() {
         initMovie();
@@ -48,7 +50,8 @@ public class MovieDetailFragment extends Fragment {
     @Background
     void initMovie()
     {
-        setMovie(movieService.getMovie(ImdbID));
+        db = new MovieDatabase(getContext(), movieService);
+        setMovie(db.getMovie(ImdbID));
     }
 
     @UiThread
