@@ -66,11 +66,12 @@ public class MovieListFragment extends ListFragment {
     {
         // one individual movie has been selected
         // create a movie detail fragment and forward the movie imdbID
-        MovieDetailFragment newFragment = new MovieDetailFragment_().builder().ImdbID(movieItem.imdbID).build();
+        MovieDetailFragment detailFragment =
+                new MovieDetailFragment_().builder().ImdbID(movieItem.imdbID).build();
 
         // change the fragment from movie list to movie details
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment, newFragment)
+                .replace(R.id.fragment, detailFragment)
                 .addToBackStack(null).commit();
     }
 }

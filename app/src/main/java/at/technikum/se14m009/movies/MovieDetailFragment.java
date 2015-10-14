@@ -66,14 +66,14 @@ public class MovieDetailFragment extends Fragment {
         movie_title.setText(movieItem.Title);
         movie_year.setText(movieItem.Runtime);
         movie_runtime.setText(movieItem.Year);
-        initImage(movieItem.Poster);
+        setImage(movieItem.Poster);
     }
 
     /**
      * @param url for the image to be loaded in background.
      */
     @Background
-    void initImage(String url)
+    void setImage(String url)
     {
         final RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 

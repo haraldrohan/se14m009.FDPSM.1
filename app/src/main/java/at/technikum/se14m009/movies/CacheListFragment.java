@@ -55,12 +55,12 @@ public class CacheListFragment extends ListFragment {
     void listItemClicked(SearchResult searchResult)
     {
         // create the movie list fragment and forward the search term
-        MovieListFragment newFragment = new MovieListFragment_().builder()
+        MovieListFragment listFragment = new MovieListFragment_().builder()
                 .SearchParam(searchResult.SearchTerm).build();
 
         // change the fragment from search to movie list
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment, newFragment).addToBackStack(null).commit();
+                .replace(R.id.fragment, listFragment).addToBackStack(null).commit();
 
     }
 }

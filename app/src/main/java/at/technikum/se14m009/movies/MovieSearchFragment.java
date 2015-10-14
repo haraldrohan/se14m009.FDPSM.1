@@ -24,14 +24,15 @@ public class MovieSearchFragment extends Fragment {
     @Click
     public void search(View view) {
         // get the search term provided by the user
-        String message = search_text.getText().toString();
+        String searchText = search_text.getText().toString();
 
         // create the movie list fragment and forward the search term
-        MovieListFragment newFragment = new MovieListFragment_().builder().SearchParam(message).build();
+        MovieListFragment listFragment =
+                new MovieListFragment_().builder().SearchParam(searchText).build();
 
         // change the fragment from search to movie list
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment, newFragment).addToBackStack(null).commit();
+                .replace(R.id.fragment, listFragment).addToBackStack(null).commit();
     }
 
     /**
@@ -42,10 +43,10 @@ public class MovieSearchFragment extends Fragment {
     public void cache(View view) {
 
         // create the movie list fragment and forward the search term
-        CacheListFragment newFragment = new CacheListFragment_();
+        CacheListFragment listFragment = new CacheListFragment_();
 
         // change the fragment from search to movie list
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment, newFragment).addToBackStack(null).commit();
+                .replace(R.id.fragment, listFragment).addToBackStack(null).commit();
     }
 }

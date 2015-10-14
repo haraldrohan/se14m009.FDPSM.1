@@ -23,11 +23,11 @@ public class MovieActivity extends AppCompatActivity
         if (fragment != null) {
 
             // Create a new Fragment to be placed in the activity layout
-            MovieSearchFragment firstFragment = new MovieSearchFragment_().builder().build();
+            MovieSearchFragment searchFragment = new MovieSearchFragment_().builder().build();
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment, firstFragment).commit();
+                    .replace(R.id.fragment, searchFragment).commit();
         }
     }
 }

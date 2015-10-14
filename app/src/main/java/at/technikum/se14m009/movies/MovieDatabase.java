@@ -62,6 +62,7 @@ public class MovieDatabase {
         searchBuilder.where(SearchEntityDao.Properties.SearchTerm.eq(searchParam));
         SearchEntity searchEntity = searchBuilder.unique();
 
+        // get the search result if it isn't cached already
         if (searchEntity == null)
         {
             long searchId = searchEntityDao.count() + 1;
@@ -74,11 +75,14 @@ public class MovieDatabase {
             }
         }
 
+        // build the search result from cache ...
         SearchResult searchResult = new SearchResult();
         searchResult.Movies = new ArrayList<MovieItem>();
 
         QueryBuilder<MovieEntity> movieBuilder = movieEntityDao.queryBuilder();
         movieBuilder.where(MovieEntityDao.Properties.SearchId.eq(searchEntity.getId()));
+
+        // ... including movies
         for (MovieEntity movieEntity : movieBuilder.list()) {
             MovieItem movieItem = new MovieItem();
             movieItem.Title = movieEntity.getTitle();
@@ -99,6 +103,7 @@ public class MovieDatabase {
      */
     public MovieItem getMovie(String imdbID) {
 
+        // get the individual movie item from cache
         QueryBuilder<MovieEntity> movieBuilder = movieEntityDao.queryBuilder();
         movieBuilder.where(MovieEntityDao.Properties.ImdbId.eq(imdbID));
         MovieEntity movieEntity = movieBuilder.uniqueOrThrow();
